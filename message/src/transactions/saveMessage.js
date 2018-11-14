@@ -9,7 +9,7 @@ function saveMessageReplica(replica, retries) {
     return replica
       .save()
       .then(doc => {
-        console.log("Message replicated successfully", doc);
+        debug("Message replicated successfully", doc);
         return doc;
       })
       .catch(err => {
@@ -29,7 +29,7 @@ function saveMessageTransaction(newValue) {
   return message
     .save()
     .then(doc => {
-      console.log("Message saved successfully:", doc);
+      debug("Message saved successfully:", doc);
       return cleanClone(doc);
     })
     .then(clone => {

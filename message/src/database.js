@@ -55,8 +55,8 @@ module.exports = {
       conn = connections.find(connection => connection.isPrimary == false);
     }
     if (conn) {
-      console.log("Requested connection:", dbKey);
-      console.log("Found:", conn.name);
+      debug("Requested connection:", dbKey);
+      debug("Found:", conn.name);
     }
     debug("requested the dbKey");
     return conn.conn;
