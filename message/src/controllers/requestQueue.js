@@ -14,35 +14,33 @@ ProcessedRequests.on("global:resumed", () => {
 });
 
 module.exports = (req, res) => {
-  if (processDownTheAppIsHealthy) {
-    const httpbody = req.body;
-    httpbody.requestID = uuidv1();
-    saveMessage(
-      {
-        ...httpbody,
-        status: "PENDING"
-      },
-      function(_result, error) {
-        if (error) {
-          console.log(error);
-        }
+  const httpbody = req.body;
+  httpbody.requestID = uuidv1();
+  saveMessage(
+    {
+      ...httpbody,
+      status: "PENDING"
+    },
+    function(_result, error) {
+      if (error) {
+        console.log(error);
       }
-    );
-    requestsQueue
-      .add(httpbody)
-      .then(job => {
-        debug("created a job succesfully");
-        res
-          .status(200)
-          .send(
-            `Request received. Check the status at: http://--/messages/${httpbody.requestID}/status`
-          );
-      })
-      .catch(e => {
-        debug("error while trying to add a job to the queue: requestsQueue");
-        console.log(e);
-      });
-  } else {
-    res.status(500).send("KO");
-  }
+    }
+  );
+  requestsQueue
+    .add(httpbody)
+    .then(job => {
+      debug("created a job succesfully");
+      if (processDownTheAppIsHealthy) {
+        res.status(200).send(
+          `Request received. Check the status at: http://--/messages/${httpbody.requestID}/status`
+        );
+      } else {
+        res.status(500).send("KO");
+      }
+    })
+    .catch(e => {
+      debug("error while trying to add a job to the queue: requestsQueue");
+      console.log(e);
+    });
 };
