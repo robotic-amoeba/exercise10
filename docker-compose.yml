@@ -3,12 +3,13 @@ services:
   message:
     build: message/
     ports:
-      - "9010:9010"
+      - "9007:9007"
     links:
       - messageapp
       - mongodb_message
       - replica_message
       - redis
+      - credit
     depends_on:
       - messageapp
       - mongodb_message
@@ -17,7 +18,7 @@ services:
   credit:
     build: credit/
     ports:
-      - "9020:9020"
+      - "9017:9017"
     links:
       - mongodb_credit
       - replica_credit
@@ -33,18 +34,18 @@ services:
 
   mongodb_credit:
     image: mongo
-    command: mongod --port 27017
+    command: mongod --port 27018    
     volumes:
       - ./credit/data/db:/credit/data/db
     ports:
-      - 27017:27017
+      - 27018:27018
   replica_credit:
     image: mongo
-    command: mongod --port 27018
+    command: mongod --port 27019    
     volumes:
       - ./credit/data/replica:/credit/data/replica
     ports:
-      - 27018:27018
+      - 27019:27019
 
   mongodb_message:
     image: mongo
@@ -65,3 +66,4 @@ services:
     image: redis
     ports:
       - 6379:6379
+
