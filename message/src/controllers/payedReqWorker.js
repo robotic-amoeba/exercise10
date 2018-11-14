@@ -6,5 +6,5 @@ const sendMessage = require("../clients/sendMessage");
 
 module.exports = ProcessedRequests.process(job => {
   debug("Payed request received: ", job.data);
-  sendMessage(job.data);
+  sendMessage(job);
 });

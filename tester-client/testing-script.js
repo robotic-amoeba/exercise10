@@ -1,7 +1,9 @@
 const ClientService = require("./ClientService");
 const client = new ClientService();
 
+let n = 0;
 
 setInterval(function() {
-  client.testPostEndpoint("/messages", {destination: "Raul", body: "A cool message"});
+  n++
+  client.testPostEndpoint("/messages", {destination: "Raul", body: `A cool message number ${n}`});
 }, 1000);

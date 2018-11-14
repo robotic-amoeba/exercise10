@@ -1,6 +1,5 @@
 const express = require("express");
 const requestsWorker = require("./src/controllers/requestsWorker");
-const rollbackWorker = require("./src/controllers/rollbackWorker")
 
 const bodyParser = require("body-parser");
 const { Validator, ValidationError } = require("express-json-validator-middleware");

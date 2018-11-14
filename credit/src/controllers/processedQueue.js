@@ -1,10 +1,12 @@
 const debug = require("debug")("debug:processedQueue");
 const Queue = require("bull");
-const ProcessedRequests = new Queue("ProcessedRequests", "redis://127.0.0.1:6379");
+const options = { defaultJobOptions: { removeOnComplete: false } };
+const ProcessedRequests = new Queue("ProcessedRequests", "redis://127.0.0.1:6379", options);
 //const ProcessedRequests = new Queue("ProcessedRequests", "redis://redis:6379");
 
+
 module.exports = message => {
-  ProcessedRequests.add(message)
+  ProcessedRequests.add(message, {removeOnComplete: false})
     .then(job => {
       debug("Request processed at credit and added to the queue: ", job.data);
     })
