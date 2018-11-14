@@ -2,15 +2,14 @@ const saveMessage = require("./saveMessage");
 const debug = require("debug")("debug:sendMessage");
 const axios = require("axios");
 const messageAPP = axios.create({
-  //baseURL: "http://messageapp:3000",
   baseURL: "http://localhost:3000",
   timeout: 2000
 });
 
 const options = {
-  timeout: 3000, // If our function takes longer than 3 seconds, trigger a failure
-  errorThresholdPercentage: 60, // When 50% of requests fail, trip the circuit
-  resetTimeout: 3000 // After 30 seconds, try again.
+  timeout: 3000, //3s
+  errorThresholdPercentage: 60, //60% fails open the circuit
+  resetTimeout: 3000 //3s
 };
 const circuitBreaker = require("opossum");
 const circuit = circuitBreaker(requestToMessageAPP, options);
@@ -24,26 +23,18 @@ function requestToMessageAPP(message, job) {
     .then(response => {
       debug("Success sending the message: Response: ", response.data);
       message.status = "OK";
-      job.remove().then(console.log("job removed"));
+      job.remove();
       return message;
     })
     .catch(error => {
+      message.status = "ERROR";
+      debug("Error in messageapp");
       if (error.response || error.request) {
-        debug("Error in messageapp");
-        message.status = "ERROR";
         if (error.code && error.code === "ECONNABORTED") {
-          debug("Timeout Exceeded!");
           message.status = "TIMEOUT";
-          //console.log(job.getState());
-          ProcessedRequests.add(job.data).then("job added");
-          throw error.code;
         }
-      } else {
-        debug("Error in HTTP request");
-        message.status = "ERROR";
       }
-      ProcessedRequests.add(job.data).then("job added");
-      //console.log(job.getState());
+      ProcessedRequests.add(job.data);
       throw "ERROR";
     });
 }
