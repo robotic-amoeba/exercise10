@@ -8,7 +8,7 @@ const messageAPP = axios.create({
 
 const options = {
   timeout: 3000, //3s
-  errorThresholdPercentage: 60, //60% fails open the circuit
+  errorThresholdPercentage: 50, //50% fails open the circuit
   resetTimeout: 3000 //3s
 };
 const circuitBreaker = require("opossum");
@@ -32,6 +32,7 @@ function requestToMessageAPP(message, job) {
       if (error.response || error.request) {
         if (error.code && error.code === "ECONNABORTED") {
           message.status = "TIMEOUT";
+          throw "TIMEOUT";
         }
       }
       ProcessedRequests.add(job.data);
@@ -75,6 +76,9 @@ module.exports = function(job) {
       if (message.status) {
         saveMessage(message);
         console.log("Failed: ", message);
+      } else {
+        console.log("Failed: ", message);
+        setTimeout(() => ProcessedRequests.add(job.data), 5000);
       }
     });
   } else {

@@ -6,4 +6,4 @@ let n = 0;
 setInterval(function() {
   n++
   client.testPostEndpoint("/messages", {destination: "Raul", body: `A cool message number ${n}`});
-}, 1000);
+}, 600);
