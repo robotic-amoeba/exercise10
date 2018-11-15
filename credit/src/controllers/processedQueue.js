@@ -6,8 +6,7 @@ const ProcessedRequests = new Queue("ProcessedRequests", "redis://127.0.0.1:6379
 
 module.exports = message => {
   ProcessedRequests.getWaiting().then(messagesEnqueued => {
-    if (messagesEnqueued>100) {
-      console.log(messagesEnqueued);
+    if (messagesEnqueued.length < 100) {
       ProcessedRequests.add(message, { removeOnComplete: false })
         .then(job => {
           debug("Request processed at credit and added to the queue: ", job.data);
